@@ -45,4 +45,11 @@ public class ReviewInternalService {
 
         return ReviewUpdateResponse.from(review);
     }
+
+    @Transactional
+    public void softDeleteReview(Long reviewId) {
+
+        Review review = reviewExternalService.findReviewByIdOrElseThrow(reviewId);
+        review.delete();
+    }
 }

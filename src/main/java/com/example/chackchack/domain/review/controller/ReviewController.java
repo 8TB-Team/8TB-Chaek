@@ -41,10 +41,11 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{bookId}/reviews/{reviewId}")
-    public ResponseEntity<ApiResponse<?>> deleteReview(@PathVariable Long bookId,
-                                                       @PathVariable Long reviewId) {
+    public ResponseEntity<ApiResponse<Object>> deleteReview(@PathVariable Long bookId,
+                                                            @PathVariable Long reviewId) {
 
-        return null;
+        reviewInternalService.softDeleteReview(reviewId);
+        return ApiResponse.ok("리뷰가 삭제되었습니다.");
     }
 
     @GetMapping("{bookId}/reviews")
