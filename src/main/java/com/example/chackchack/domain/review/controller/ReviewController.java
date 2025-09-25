@@ -24,7 +24,11 @@ public class ReviewController {
     public ResponseEntity<ApiResponse<ReviewCreateResponse>> createReview(@PathVariable Long bookId,
                                                                           @RequestBody ReviewCreateRequest request) {
 
-        return null;
+        // TODO 임시 userId 제거 -> 인증인가 완료시 대체
+        Long userId = 1L;
+
+        ReviewCreateResponse createdReview = reviewInternalService.createReview(request, userId, bookId);
+        return ApiResponse.created("새로운 리뷰가 작성되었습니다.", createdReview);
     }
 
     @PatchMapping("/{bookId}/reviews/{reviewId}")
