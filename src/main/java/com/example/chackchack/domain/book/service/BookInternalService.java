@@ -2,8 +2,6 @@ package com.example.chackchack.domain.book.service;
 
 import com.example.chackchack.domain.book.bookDto.BookRequest;
 import com.example.chackchack.domain.book.bookDto.BookResponse;
-import com.example.chackchack.domain.book.bookException.BookException;
-import com.example.chackchack.domain.book.bookException.commonException.exception.BookErrorCode;
 import com.example.chackchack.domain.book.bookMapper.BookMapper;
 import com.example.chackchack.domain.book.entity.Book;
 import com.example.chackchack.domain.book.repository.BookRepository;
@@ -14,10 +12,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class BookService {
+public class BookInternalService {
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final BookExternalService bookExternalService;
 
     public BookResponse createBook(BookRequest bookRequest){
 
@@ -32,8 +31,7 @@ public class BookService {
     public BookResponse updateBook(Long bookId,
                                    BookRequest bookRequest){
 
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookException(BookErrorCode.BOOK_NOT_FOUND));
+        Book book = bookExternalService.findByBookIdOrElseThrow(bookId);
 
         bookRepository.delete(book);
 
@@ -57,8 +55,7 @@ public class BookService {
 
     public BookResponse findBook(Long bookId){
 
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookException(BookErrorCode.BOOK_NOT_FOUND));
+        Book book = bookExternalService.findByBookIdOrElseThrow(bookId);
 
         return bookMapper.toResponse(book);
     }
@@ -66,4 +63,5 @@ public class BookService {
     public void deleteBook(Long bookId) {
         bookRepository.deleteById(bookId);
     }
+
 }
