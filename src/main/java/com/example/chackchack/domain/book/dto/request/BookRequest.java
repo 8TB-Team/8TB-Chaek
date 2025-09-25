@@ -1,4 +1,4 @@
-package com.example.chackchack.domain.book.bookDto;
+package com.example.chackchack.domain.book.dto.request;
 
 public record BookRequest(
                 String title,

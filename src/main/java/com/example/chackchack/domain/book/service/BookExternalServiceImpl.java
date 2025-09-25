@@ -1,7 +1,7 @@
 package com.example.chackchack.domain.book.service;
 
-import com.example.chackchack.domain.book.bookException.BookException;
-import com.example.chackchack.domain.book.bookException.commonException.exception.BookErrorCode;
+import com.example.chackchack.domain.book.exception.BookException;
+import com.example.chackchack.domain.book.exception.commonException.exception.BookErrorCode;
 import com.example.chackchack.domain.book.entity.Book;
 import com.example.chackchack.domain.book.repository.BookRepository;
 import lombok.RequiredArgsConstructor;

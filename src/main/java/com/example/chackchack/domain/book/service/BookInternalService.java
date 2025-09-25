@@ -1,8 +1,8 @@
 package com.example.chackchack.domain.book.service;
 
-import com.example.chackchack.domain.book.bookDto.BookRequest;
-import com.example.chackchack.domain.book.bookDto.BookResponse;
-import com.example.chackchack.domain.book.bookMapper.BookMapper;
+import com.example.chackchack.domain.book.dto.request.BookRequest;
+import com.example.chackchack.domain.book.dto.response.BookResponse;
+import com.example.chackchack.domain.book.mapper.BookMapper;
 import com.example.chackchack.domain.book.entity.Book;
 import com.example.chackchack.domain.book.repository.BookRepository;
 import lombok.RequiredArgsConstructor;

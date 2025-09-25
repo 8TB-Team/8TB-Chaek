@@ -2,9 +2,8 @@ package com.example.chackchack.domain.book.controller;
 
 
 import com.example.chackchack.common.dto.response.ApiResponse;
-import com.example.chackchack.domain.book.bookDto.BookRequest;
-import com.example.chackchack.domain.book.bookDto.BookResponse;
-import com.example.chackchack.domain.book.service.BookExternalServiceImpl;
+import com.example.chackchack.domain.book.dto.request.BookRequest;
+import com.example.chackchack.domain.book.dto.response.BookResponse;
 import com.example.chackchack.domain.book.service.BookInternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

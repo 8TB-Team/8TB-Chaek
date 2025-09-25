@@ -1,4 +1,4 @@
-package com.example.chackchack.domain.book.bookException.commonException.exception;
+package com.example.chackchack.domain.book.exception.commonException.exception;
 
 import com.example.chackchack.common.exception.ErrorCode;
 import lombok.Getter;

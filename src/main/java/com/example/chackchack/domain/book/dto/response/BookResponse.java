@@ -1,4 +1,4 @@
-package com.example.chackchack.domain.book.bookDto;
+package com.example.chackchack.domain.book.dto.response;
 
 import lombok.Builder;
 

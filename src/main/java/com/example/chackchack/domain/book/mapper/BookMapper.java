@@ -1,7 +1,7 @@
-package com.example.chackchack.domain.book.bookMapper;
+package com.example.chackchack.domain.book.mapper;
 
-import com.example.chackchack.domain.book.bookDto.BookRequest;
-import com.example.chackchack.domain.book.bookDto.BookResponse;
+import com.example.chackchack.domain.book.dto.request.BookRequest;
+import com.example.chackchack.domain.book.dto.response.BookResponse;
 import com.example.chackchack.domain.book.entity.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.example.chackchack.domain.book.bookException;
+package com.example.chackchack.domain.book.exception;
 
 import com.example.chackchack.common.exception.ErrorCode;
 import com.example.chackchack.common.exception.GlobalException;
