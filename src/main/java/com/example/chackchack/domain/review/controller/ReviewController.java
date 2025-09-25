@@ -36,7 +36,8 @@ public class ReviewController {
                                                                           @PathVariable Long reviewId,
                                                                           @RequestBody ReviewUpdateRequest request) {
 
-        return null;
+        ReviewUpdateResponse updatedReview = reviewInternalService.updateResponse(request, reviewId);
+        return ApiResponse.ok("리뷰가 수정되었습니다.", updatedReview);
     }
 
     @DeleteMapping("/{bookId}/reviews/{reviewId}")

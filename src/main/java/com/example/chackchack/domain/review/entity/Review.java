@@ -3,6 +3,7 @@ package com.example.chackchack.domain.review.entity;
 import com.example.chackchack.common.entity.SoftDeleteEntity;
 import com.example.chackchack.domain.book.entity.Book;
 import com.example.chackchack.domain.review.dto.request.ReviewCreateRequest;
+import com.example.chackchack.domain.review.dto.request.ReviewUpdateRequest;
 import com.example.chackchack.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -37,6 +38,11 @@ public class Review extends SoftDeleteEntity {
         this.rating = rating;
         this.user = user;
         this.book = book;
+    }
+
+    public void update(ReviewUpdateRequest request) {
+        this.content = request.content();
+        this.rating = request.rating();
     }
 
     public static Review of(ReviewCreateRequest request, User user, Book book) {

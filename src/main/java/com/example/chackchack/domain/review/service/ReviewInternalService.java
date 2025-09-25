@@ -3,7 +3,9 @@ package com.example.chackchack.domain.review.service;
 import com.example.chackchack.domain.book.entity.Book;
 import com.example.chackchack.domain.book.service.BookExternalService;
 import com.example.chackchack.domain.review.dto.request.ReviewCreateRequest;
+import com.example.chackchack.domain.review.dto.request.ReviewUpdateRequest;
 import com.example.chackchack.domain.review.dto.response.ReviewCreateResponse;
+import com.example.chackchack.domain.review.dto.response.ReviewUpdateResponse;
 import com.example.chackchack.domain.review.entity.Review;
 import com.example.chackchack.domain.review.repository.ReviewRepository;
 import com.example.chackchack.domain.user.entity.User;
@@ -20,6 +22,7 @@ public class ReviewInternalService {
     private final ReviewRepository reviewRepository;
     private final UserExternalService userExternalService;
     private final BookExternalService bookExternalService;
+    private final ReviewExternalService reviewExternalService;
 
     @Transactional
     public ReviewCreateResponse createReview(ReviewCreateRequest request,
@@ -32,5 +35,14 @@ public class ReviewInternalService {
         Review review = reviewRepository.save(Review.of(request, user, book));
 
         return ReviewCreateResponse.from(review);
+    }
+
+    @Transactional
+    public ReviewUpdateResponse updateResponse(ReviewUpdateRequest request, Long reviewId) {
+
+        Review review = reviewExternalService.findReviewByIdOrElseThrow(reviewId);
+        review.update(request);
+
+        return ReviewUpdateResponse.from(review);
     }
 }

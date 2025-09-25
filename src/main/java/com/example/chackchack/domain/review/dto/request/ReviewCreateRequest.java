@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record ReviewCreateRequest(
+
         @NotBlank(message = "비어있는 댓글을 작성할 수 없습니다.")
         @Size(max = 1000, message = "최대 1,000자까지 작성할 수 있습니다.")
         String content,
