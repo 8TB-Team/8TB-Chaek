@@ -17,7 +17,7 @@ public class BookController {
 
     private final BookInternalService bookService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ApiResponse<BookResponse>> createBook(@RequestBody BookRequest bookRequest){
 
         BookResponse book = bookService.createBook(bookRequest);
@@ -27,7 +27,7 @@ public class BookController {
     }
 
     //patch로 변경
-    @PostMapping("/update")
+    @PostMapping("/{bookId}")
     public ResponseEntity<ApiResponse<BookResponse>> updateBook(@RequestBody BookRequest bookRequest,
                                                    @RequestParam Long bookId){
 
@@ -37,7 +37,7 @@ public class BookController {
     }
 
     //리스트로 찾기
-    @GetMapping("/find/search")
+    @GetMapping
     public ResponseEntity<ApiResponse<Page<BookResponse>>> findBooks(@RequestParam("keyword") String keyword,
                                         @RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size
@@ -47,7 +47,7 @@ public class BookController {
         return ApiResponse.ok(getBookList);
     }
 
-    @GetMapping("/find/{bookId}")
+    @GetMapping("/{bookId}")
     public ResponseEntity<ApiResponse<BookResponse>> findBook(@PathVariable("bookId") Long bookId
     ){
         BookResponse book = bookService.findBook(bookId);
