@@ -54,17 +54,22 @@ public class ReviewController {
     @GetMapping("{bookId}/reviews")
     public ResponseEntity<ApiPageResponse<ReviewPageResponse>> getBookReviews(@PathVariable Long bookId,
                                                                               @PageableDefault(
-                                                                                        sort = "createdAt",
-                                                                                        direction = Sort.Direction.DESC
-                                                                                ) Pageable pageable) {
+                                                                                      sort = "createdAt",
+                                                                                      direction = Sort.Direction.DESC
+                                                                              ) Pageable pageable) {
 
         Page<ReviewPageResponse> pagedReviews = reviewInternalService.getBookReviews(pageable, bookId);
         return ApiPageResponse.ok(pagedReviews);
     }
-//
-//    @GetMapping
-//    public ResponseEntity<ApiResponse<List<ReviewDetailResponse>>> getMyReviews() {
-//
-//        return null;
-//    }
+
+    @GetMapping("/reviews/my")
+    public ResponseEntity<ApiPageResponse<ReviewPageResponse>> getMyReviews(@PageableDefault(
+                                                                                    sort = "createdAt",
+                                                                                    direction = Sort.Direction.DESC
+                                                                            ) Pageable pageable) {
+
+        // TODO 임시 userId 제거 -> 인증인가 완료시 대체
+        Page<ReviewPageResponse> pagedReviews = reviewInternalService.getMyReviews(pageable, 1L);
+        return ApiPageResponse.ok(pagedReviews);
+    }
 }
