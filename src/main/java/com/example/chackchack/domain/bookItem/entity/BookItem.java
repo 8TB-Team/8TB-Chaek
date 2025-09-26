@@ -3,14 +3,16 @@ package com.example.chackchack.domain.bookItem.entity;
 import com.example.chackchack.domain.book.entity.Book;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Random;
 
 @Getter
-@Builder
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BookItem {
 
     @Id
@@ -37,6 +39,12 @@ public class BookItem {
         if (this.isbn == null) {
             this.isbn = ISBNGenerator();
         }
+    }
+
+    @Builder
+    public BookItem(int volume, Book book) {
+        this.volume = volume;
+        this.book = book;
     }
 
     static String serialGenerator(){
