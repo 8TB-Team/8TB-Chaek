@@ -6,8 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class ReviewUpdateResponse {
-
+public class ReviewPageResponse {
     private final Long id;
     private final String content;
     private final int rating;
@@ -16,7 +15,7 @@ public class ReviewUpdateResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    private ReviewUpdateResponse(Long id, String content, int rating, Long userId, Long bookId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private ReviewPageResponse(Long id, String content, int rating, Long userId, Long bookId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.content = content;
         this.rating = rating;
@@ -26,8 +25,8 @@ public class ReviewUpdateResponse {
         this.updatedAt = updatedAt;
     }
 
-    public static ReviewUpdateResponse from(Review review) {
-        return new ReviewUpdateResponse(
+    public static ReviewPageResponse from(Review review) {
+        return new ReviewPageResponse(
                 review.getId(),
                 review.getContent(),
                 review.getRating(),

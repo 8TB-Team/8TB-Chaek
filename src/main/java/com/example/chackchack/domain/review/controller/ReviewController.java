@@ -1,21 +1,24 @@
 package com.example.chackchack.domain.review.controller;
 
+import com.example.chackchack.common.dto.response.ApiPageResponse;
 import com.example.chackchack.common.dto.response.ApiResponse;
 import com.example.chackchack.domain.review.dto.request.ReviewCreateRequest;
 import com.example.chackchack.domain.review.dto.request.ReviewUpdateRequest;
 import com.example.chackchack.domain.review.dto.response.ReviewCreateResponse;
-import com.example.chackchack.domain.review.dto.response.ReviewDetailResponse;
+import com.example.chackchack.domain.review.dto.response.ReviewPageResponse;
 import com.example.chackchack.domain.review.dto.response.ReviewUpdateResponse;
 import com.example.chackchack.domain.review.service.ReviewInternalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/book")
+@RequestMapping("/api/v1/books")
 public class ReviewController {
 
     private final ReviewInternalService reviewInternalService;
@@ -24,7 +27,11 @@ public class ReviewController {
     public ResponseEntity<ApiResponse<ReviewCreateResponse>> createReview(@PathVariable Long bookId,
                                                                           @RequestBody ReviewCreateRequest request) {
 
-        return null;
+        // TODO 임시 userId 제거 -> 인증인가 완료시 대체
+        Long userId = 1L;
+
+        ReviewCreateResponse createdReview = reviewInternalService.createReview(request, userId, bookId);
+        return ApiResponse.created("새로운 리뷰가 작성되었습니다.", createdReview);
     }
 
     @PatchMapping("/{bookId}/reviews/{reviewId}")
@@ -32,25 +39,37 @@ public class ReviewController {
                                                                           @PathVariable Long reviewId,
                                                                           @RequestBody ReviewUpdateRequest request) {
 
-        return null;
+        ReviewUpdateResponse updatedReview = reviewInternalService.updateResponse(request, reviewId);
+        return ApiResponse.ok("리뷰가 수정되었습니다.", updatedReview);
     }
 
     @DeleteMapping("/{bookId}/reviews/{reviewId}")
-    public ResponseEntity<ApiResponse<?>> deleteReview(@PathVariable Long bookId,
-                                                       @PathVariable Long reviewId) {
+    public ResponseEntity<ApiResponse<Object>> deleteReview(@PathVariable Long bookId,
+                                                            @PathVariable Long reviewId) {
 
-        return null;
+        reviewInternalService.softDeleteReview(reviewId);
+        return ApiResponse.ok("리뷰가 삭제되었습니다.");
     }
 
     @GetMapping("{bookId}/reviews")
-    public ResponseEntity<ApiResponse<List<ReviewDetailResponse>>> getReviews(@PathVariable Long bookId) {
+    public ResponseEntity<ApiPageResponse<ReviewPageResponse>> getBookReviews(@PathVariable Long bookId,
+                                                                              @PageableDefault(
+                                                                                      sort = "createdAt",
+                                                                                      direction = Sort.Direction.DESC
+                                                                              ) Pageable pageable) {
 
-        return null;
+        Page<ReviewPageResponse> pagedReviews = reviewInternalService.getBookReviews(pageable, bookId);
+        return ApiPageResponse.ok(pagedReviews);
     }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<ReviewDetailResponse>>> getMyReviews() {
+    @GetMapping("/reviews/my")
+    public ResponseEntity<ApiPageResponse<ReviewPageResponse>> getMyReviews(@PageableDefault(
+                                                                                    sort = "createdAt",
+                                                                                    direction = Sort.Direction.DESC
+                                                                            ) Pageable pageable) {
 
-        return null;
+        // TODO 임시 userId 제거 -> 인증인가 완료시 대체
+        Page<ReviewPageResponse> pagedReviews = reviewInternalService.getMyReviews(pageable, 1L);
+        return ApiPageResponse.ok(pagedReviews);
     }
 }
