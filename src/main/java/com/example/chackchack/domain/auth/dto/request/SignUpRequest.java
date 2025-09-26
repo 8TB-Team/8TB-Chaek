@@ -17,7 +17,6 @@ public record SignUpRequest (
         @NotBlank
         String nickname,
 
-        @NotBlank
         UserRole userRole
 ){
     // 입력 정규화
