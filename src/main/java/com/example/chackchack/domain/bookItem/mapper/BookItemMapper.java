@@ -9,22 +9,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookItemMapper {
 
-    public BookItem toEntity(BookItemRequest bookItemRequest,Book book){
+    public BookItem toEntity(BookItemRequest bookItemRequest, Book book) {
 
         return BookItem.builder()
                 .book(book)
-                .volume(bookItemRequest.volume())
+//                .volume(bookItemRequest.volume())
                 .build();
     }
 
-    public BookItemResponse toResponse(BookItem bookItem){
+    public BookItemResponse toResponse(BookItem bookItem) {
 
         return BookItemResponse.builder()
                 .id(bookItem.getId())
                 .book(bookItem.getBook())
-                .volume(bookItem.getVolume())
+//                .volume(bookItem.getVolume())
                 .serial(bookItem.getSerialNumber())
-                .isbn(bookItem.getIsbn())
+//                .isbn(bookItem.getIsbn())
                 .build();
     }
 }
