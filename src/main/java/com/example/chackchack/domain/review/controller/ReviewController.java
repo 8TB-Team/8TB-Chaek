@@ -1,21 +1,24 @@
 package com.example.chackchack.domain.review.controller;
 
+import com.example.chackchack.common.dto.response.ApiPageResponse;
 import com.example.chackchack.common.dto.response.ApiResponse;
 import com.example.chackchack.domain.review.dto.request.ReviewCreateRequest;
 import com.example.chackchack.domain.review.dto.request.ReviewUpdateRequest;
 import com.example.chackchack.domain.review.dto.response.ReviewCreateResponse;
-import com.example.chackchack.domain.review.dto.response.ReviewDetailResponse;
+import com.example.chackchack.domain.review.dto.response.ReviewPageResponse;
 import com.example.chackchack.domain.review.dto.response.ReviewUpdateResponse;
 import com.example.chackchack.domain.review.service.ReviewInternalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/book")
+@RequestMapping("/api/v1/books")
 public class ReviewController {
 
     private final ReviewInternalService reviewInternalService;
@@ -49,14 +52,19 @@ public class ReviewController {
     }
 
     @GetMapping("{bookId}/reviews")
-    public ResponseEntity<ApiResponse<List<ReviewDetailResponse>>> getReviews(@PathVariable Long bookId) {
+    public ResponseEntity<ApiPageResponse<ReviewPageResponse>> getBookReviews(@PathVariable Long bookId,
+                                                                              @PageableDefault(
+                                                                                        sort = "createdAt",
+                                                                                        direction = Sort.Direction.DESC
+                                                                                ) Pageable pageable) {
 
-        return null;
+        Page<ReviewPageResponse> pagedReviews = reviewInternalService.getBookReviews(pageable, bookId);
+        return ApiPageResponse.ok(pagedReviews);
     }
-
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<ReviewDetailResponse>>> getMyReviews() {
-
-        return null;
-    }
+//
+//    @GetMapping
+//    public ResponseEntity<ApiResponse<List<ReviewDetailResponse>>> getMyReviews() {
+//
+//        return null;
+//    }
 }
