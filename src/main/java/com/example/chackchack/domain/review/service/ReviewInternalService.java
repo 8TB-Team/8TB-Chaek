@@ -58,17 +58,13 @@ public class ReviewInternalService {
 
     public Page<ReviewPageResponse> getBookReviews(Pageable pageable, Long bookId) {
 
-        Book book = bookExternalService.findByBookIdOrElseThrow(bookId);
-        Page<Review> reviews = reviewRepository.findAllByBook(book, pageable);
-
+        Page<Review> reviews = reviewRepository.findAllByBookId(bookId, pageable);
         return reviews.map(ReviewPageResponse::from);
     }
 
     public Page<ReviewPageResponse> getMyReviews(Pageable pageable, Long userId) {
 
-        User user = userExternalService.findUserByIdOrElseThrow(userId);
-        Page<Review> reviews = reviewRepository.findAllByUser(user, pageable);
-
+        Page<Review> reviews = reviewRepository.findAllByUserId(userId, pageable);
         return reviews.map(ReviewPageResponse::from);
     }
 }
