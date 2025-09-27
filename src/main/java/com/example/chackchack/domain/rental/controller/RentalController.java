@@ -4,14 +4,12 @@ import com.example.chackchack.common.dto.response.ApiResponse;
 import com.example.chackchack.domain.common.dto.AuthUser;
 import com.example.chackchack.domain.rental.dto.request.RentalCreateRequest;
 import com.example.chackchack.domain.rental.dto.response.RentalCreateResponse;
+import com.example.chackchack.domain.rental.dto.response.RentalUpdateResponse;
 import com.example.chackchack.domain.rental.service.RentalInternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,5 +27,10 @@ public class RentalController {
         return ApiResponse.created("대출이 되었습니다.", response);
     }
 
-
+    @PatchMapping("/{rentalId}/return")
+    public ResponseEntity<ApiResponse<RentalUpdateResponse>> updateRental(@PathVariable Long rentalId,
+                                                                          @AuthenticationPrincipal AuthUser authUser) {
+        RentalUpdateResponse response = rentalInternalService.returnRental(rentalId, authUser.getId());
+        return ApiResponse.ok(response);
+    }
 }

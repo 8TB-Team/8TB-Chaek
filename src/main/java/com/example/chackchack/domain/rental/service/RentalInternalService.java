@@ -4,6 +4,7 @@ import com.example.chackchack.domain.bookItem.entity.BookItem;
 import com.example.chackchack.domain.bookItem.repository.BookItemRepository;
 import com.example.chackchack.domain.rental.dto.request.RentalCreateRequest;
 import com.example.chackchack.domain.rental.dto.response.RentalCreateResponse;
+import com.example.chackchack.domain.rental.dto.response.RentalUpdateResponse;
 import com.example.chackchack.domain.rental.entity.Rental;
 import com.example.chackchack.domain.rental.enums.RentalStatus;
 import com.example.chackchack.domain.rental.exception.InvalidRentalException;
@@ -39,5 +40,19 @@ public class RentalInternalService {
 
 
         return RentalCreateResponse.from(savedRental);
+    }
+
+    @Transactional
+    public RentalUpdateResponse returnRental(Long rentalId, Long userId) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new InvalidRentalException(RentalErrorCode.REN_SEARCH_FAIL_INVALID_ID));
+
+        if (!rental.getUser().getId().equals(userId)) {
+            throw new InvalidRentalException(RentalErrorCode.REN_RETURN_NO_PERMISSION);
+        }
+
+        rental.returnRental();
+
+        return RentalUpdateResponse.from(rental);
     }
 }
