@@ -33,7 +33,7 @@ public class Review extends SoftDeleteEntity {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    public Review(String content, int rating, User user, Book book) {
+    private Review(String content, int rating, User user, Book book) {
         this.content = content;
         this.rating = rating;
         this.user = user;
