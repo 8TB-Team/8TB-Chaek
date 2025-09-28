@@ -1,4 +1,4 @@
-package com.example.chackchack.config;
+package com.example.chackchack.common.security;
 
 import com.example.chackchack.domain.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
