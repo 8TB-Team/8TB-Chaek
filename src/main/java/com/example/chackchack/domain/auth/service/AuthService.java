@@ -1,6 +1,6 @@
 package com.example.chackchack.domain.auth.service;
 
-import com.example.chackchack.config.JwtUtil;
+import com.example.chackchack.common.security.JwtUtil;
 import com.example.chackchack.domain.auth.dto.request.SignInRequest;
 import com.example.chackchack.domain.auth.dto.request.SignUpRequest;
 import com.example.chackchack.domain.auth.dto.response.SignInResponse;
