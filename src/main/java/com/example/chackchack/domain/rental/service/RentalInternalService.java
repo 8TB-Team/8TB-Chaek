@@ -4,6 +4,7 @@ import com.example.chackchack.domain.bookItem.entity.BookItem;
 import com.example.chackchack.domain.bookItem.repository.BookItemRepository;
 import com.example.chackchack.domain.rental.dto.request.RentalCreateRequest;
 import com.example.chackchack.domain.rental.dto.response.RentalCreateResponse;
+import com.example.chackchack.domain.rental.dto.response.RentalPageResponse;
 import com.example.chackchack.domain.rental.dto.response.RentalUpdateResponse;
 import com.example.chackchack.domain.rental.entity.Rental;
 import com.example.chackchack.domain.rental.enums.RentalStatus;
@@ -11,8 +12,11 @@ import com.example.chackchack.domain.rental.exception.InvalidRentalException;
 import com.example.chackchack.domain.rental.exception.RentalErrorCode;
 import com.example.chackchack.domain.rental.repository.RentalRepository;
 import com.example.chackchack.domain.user.entity.User;
+import com.example.chackchack.domain.user.repository.UserRepository;
 import com.example.chackchack.domain.user.service.UserExternalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +26,7 @@ public class RentalInternalService {
     private final BookItemRepository bookItemRepository;
     private final RentalRepository rentalRepository;
     private final UserExternalService userExternalService;
+    private final UserRepository userRepository;
 
     @Transactional
     public RentalCreateResponse createRental(RentalCreateRequest request, Long userId) {
@@ -54,5 +59,17 @@ public class RentalInternalService {
         rental.returnRental();
 
         return RentalUpdateResponse.from(rental);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RentalPageResponse> getAllRentals(Pageable pageable) {
+        return rentalRepository.findAll(pageable)
+                .map(RentalPageResponse::from);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RentalPageResponse> getRentalsByUser(Long userId, Pageable pageable) {
+        return rentalRepository.findByUserId(userId, pageable)
+                .map(RentalPageResponse::from);
     }
 }
