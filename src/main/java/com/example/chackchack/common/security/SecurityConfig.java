@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .rememberMe(AbstractHttpConfigurer::disable)     // 서버가 쿠키 발급하여 자동 로그인
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(request -> request.getRequestURI().startsWith("/auth")).permitAll()
+                        .requestMatchers(("/api/v1/auth/**")).permitAll()
                         .requestMatchers("/admin").hasAuthority(UserRole.ROLE_USER.getUserRole())
                         .requestMatchers("/test").hasAuthority(UserRole.ROLE_USER.getUserRole())
                         .requestMatchers("/open").permitAll() // `/open`은 아무나 접근 가능
