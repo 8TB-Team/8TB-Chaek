@@ -27,8 +27,11 @@ public class RentalExternalServiceImpl implements RentalExternalService {
         }
 
         // 모든 BookItem이 대여 중인지 확인
-        boolean allRented = bookItems.stream()
-                .allMatch(bookItem -> rentalRepository.existsByBookItemAndStatus(bookItem, RentalStatus.RENTED));
+        // RENTED 상태인 BookItem 개수 조회
+        long rentedCount = rentalRepository.countByBookItemInAndStatus(bookItems, RentalStatus.RENTED);
+
+        // 모든 책이 RENTED일 때만 예약 가능
+        boolean allRented = rentedCount == bookItems.size();
 
         return allRented; // 모두 RENTEND면 예약 가능
     }

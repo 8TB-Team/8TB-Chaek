@@ -24,4 +24,6 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
     Page<Rental> findAll(Pageable pageable);
 
     boolean existsByBookItemAndStatus(BookItem bookItem, RentalStatus status);
+
+    long countByBookItemInAndStatus(List<BookItem> bookItems, RentalStatus status);
 }
