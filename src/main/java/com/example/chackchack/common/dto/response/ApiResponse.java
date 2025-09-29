@@ -52,4 +52,11 @@ public class ApiResponse<T> {
     public static <T> ResponseEntity<ApiResponse<T>> ok() {
         return ResponseEntity.ok(ofSuccess(null, null));
     }
+
+    /**
+     * return 204 NO_CONTENT
+     */
+    public static ResponseEntity<Void> noContent() {
+        return ResponseEntity.noContent().build();
+    }
 }
