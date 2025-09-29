@@ -10,6 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BookInternalService {
@@ -43,7 +45,7 @@ public class BookInternalService {
         return response;
     }
 
-    public Page<BookResponse> findBookList(String keyword,
+    public List<BookResponse> findBookList(String keyword,
                                            int page,
                                            int size
     ){
@@ -51,9 +53,12 @@ public class BookInternalService {
 
         Page<Book> bookPage = bookRepository.findByTitleContaining(keyword,pageRequest);
 
-        Page<BookResponse> bookResponses = BookResponse.fromPage(bookPage);
+        List<BookResponse> bookResponseList = bookPage
+                .stream()
+                .map(BookResponse::BookResponseFrom)
+                .toList();
 
-        return bookResponses;
+        return bookResponseList;
     }
 
     public BookResponse findBook(Long bookId){
@@ -63,8 +68,8 @@ public class BookInternalService {
         return BookResponse.BookResponseFrom(book);
     }
 
-    public void deleteBook(Long bookId) {
-        bookRepository.deleteById(bookId);
+    public void deleteBook(Long Id) {
+        bookRepository.deleteById(Id);
     }
 
 }
