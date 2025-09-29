@@ -14,11 +14,11 @@ public record UserPasswordChangeRequest(
         String currentPassword,
 
         @NotBlank
-        @Size(min = 8, max = 128)
+        @Size(min = 6, max = 128)
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         @Pattern(
-                regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*()_+\\-\\[\\]{}:,.?=])(?!.*['\"`;\\\\/|<>`]).{8,}$",
-                message = "대문자/소문자/특수문자 각 1자 이상 포함, 금지문자 미포함, 최소 8자 이상이어야 합니다."
+                regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*()_+\\-\\[\\]{}:,.?=])(?!.*['\"`;\\\\/|<>`]).{7,}$",
+                message = "대문자/소문자/특수문자 각 1자 이상 포함, 금지문자 미포함, 최소 6자 이상이어야 합니다."
         )
         String newPassword,
 
