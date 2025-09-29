@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/books")
 @RequiredArgsConstructor
@@ -37,11 +39,11 @@ public class BookController {
 
     //리스트로 찾기
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<BookResponse>>> findBooks(@RequestParam("keyword") String keyword,
+    public ResponseEntity<ApiResponse<List<BookResponse>>> findBooks(@RequestParam("keyword") String keyword,
                                         @RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size
     ){
-        Page<BookResponse> getBookList = bookService.findBookList(keyword, page, size);
+        List<BookResponse> getBookList = bookService.findBookList(keyword, page, size);
 
         return ApiResponse.ok(getBookList);
     }
