@@ -26,10 +26,9 @@ public class BookController {
 
     }
 
-    //patch로 변경
-    @PostMapping("/{bookId}")
+    @PatchMapping("/{bookId}")
     public ResponseEntity<ApiResponse<BookResponse>> updateBook(@RequestBody BookRequest bookRequest,
-                                                   @RequestParam Long bookId){
+                                                   @PathVariable Long bookId){
 
         BookResponse bookResponse = bookService.updateBook(bookId, bookRequest);
 
