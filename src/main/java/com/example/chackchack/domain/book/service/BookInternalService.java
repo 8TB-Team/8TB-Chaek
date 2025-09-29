@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,14 +28,15 @@ public class BookInternalService {
         return response;
     }
 
+    @Transactional
     public BookResponse updateBook(Long bookId,
                                    BookRequest bookRequest){
 
         Book book = bookExternalService.findByBookIdOrElseThrow(bookId);
 
-        bookRepository.delete(book);
+        book.update(bookRequest);
 
-        Book newBook = Book.toEntityFrom(bookRequest);
+        Book newBook = bookRepository.save(book);
 
         BookResponse response = BookResponse.BookResponseFrom(newBook);
 

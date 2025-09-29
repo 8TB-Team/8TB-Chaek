@@ -41,8 +41,9 @@ public class Book extends BaseEntity {
         return new Book(bookRequest.author(), bookRequest.category(), bookRequest.title());
     }
 
-    public static Book toUpdateOf(Long bookId, BookRequest bookRequest){
-        return new Book(bookRequest.author(), bookRequest.category(), bookRequest.title());
-
+    public void update(BookRequest request) {
+        this.title = request.title();
+        this.author = request.author();
+        this.category = request.category();
     }
 }
