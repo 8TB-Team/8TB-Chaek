@@ -2,7 +2,6 @@ package com.example.chackchack.domain.book.service;
 
 import com.example.chackchack.domain.book.dto.request.BookRequest;
 import com.example.chackchack.domain.book.dto.response.BookResponse;
-import com.example.chackchack.domain.book.mapper.BookMapper;
 import com.example.chackchack.domain.book.entity.Book;
 import com.example.chackchack.domain.book.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,15 +14,15 @@ import org.springframework.stereotype.Service;
 public class BookInternalService {
 
     private final BookRepository bookRepository;
-    private final BookMapper bookMapper;
     private final BookExternalService bookExternalService;
 
     public BookResponse createBook(BookRequest bookRequest){
 
-        Book book = bookMapper.toEntity(bookRequest);
+        Book book = Book.toEntityFrom(bookRequest);
+
         bookRepository.save(book);
 
-        BookResponse response = bookMapper.toResponse(book);
+        BookResponse response = BookResponse.BookResponseFrom(book);
 
         return response;
     }
@@ -35,9 +34,9 @@ public class BookInternalService {
 
         bookRepository.delete(book);
 
-        Book newBook = bookMapper.toEntity(bookRequest);
+        Book newBook = Book.toEntityFrom(bookRequest);
 
-        BookResponse response = bookMapper.toResponse(newBook);
+        BookResponse response = BookResponse.BookResponseFrom(newBook);
 
         return response;
     }
@@ -50,14 +49,16 @@ public class BookInternalService {
 
         Page<Book> bookPage = bookRepository.findByTitleContaining(keyword,pageRequest);
 
-        return bookMapper.BookPageToResponse(bookPage);
+        Page<BookResponse> bookResponses = BookResponse.fromPage(bookPage);
+
+        return bookResponses;
     }
 
     public BookResponse findBook(Long bookId){
 
         Book book = bookExternalService.findByBookIdOrElseThrow(bookId);
 
-        return bookMapper.toResponse(book);
+        return BookResponse.BookResponseFrom(book);
     }
 
     public void deleteBook(Long bookId) {

@@ -1,4 +1,4 @@
-package com.example.chackchack.domain.book.exception.commonException.exception;
+package com.example.chackchack.domain.book.exception;
 
 import com.example.chackchack.common.exception.ErrorCode;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum BookErrorCode implements ErrorCode {
 
-    BOOK_NOT_FOUND("BOOK-001",HttpStatus.NOT_FOUND,"제품을 찾을 수 없습니다.");
+    BOOK_NOT_FOUND("BOOK-001",HttpStatus.NOT_FOUND,"도서를 찾을 수 없습니다.");
 
     private final String code;
     private final HttpStatus httpStatus;

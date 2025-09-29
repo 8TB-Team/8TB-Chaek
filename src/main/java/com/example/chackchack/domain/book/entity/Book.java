@@ -1,6 +1,7 @@
 package com.example.chackchack.domain.book.entity;
 
 import com.example.chackchack.common.entity.BaseEntity;
+import com.example.chackchack.domain.book.dto.request.BookRequest;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,10 +31,18 @@ public class Book extends BaseEntity {
     @Size(max = 50, message = "50자 이하로 입력하세요")
     String category;
 
-    @Builder
     public Book(String author, String category,String title) {
         this.author = author;
         this.category = category;
         this.title = title;
+    }
+
+    public static Book toEntityFrom(BookRequest bookRequest){
+        return new Book(bookRequest.author(), bookRequest.category(), bookRequest.title());
+    }
+
+    public static Book toUpdateOf(Long bookId, BookRequest bookRequest){
+        return new Book(bookRequest.author(), bookRequest.category(), bookRequest.title());
+
     }
 }
