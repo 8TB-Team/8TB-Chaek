@@ -2,6 +2,7 @@ package com.example.chackchack.domain.review.controller;
 
 import com.example.chackchack.common.dto.response.ApiPageResponse;
 import com.example.chackchack.common.dto.response.ApiResponse;
+import com.example.chackchack.domain.common.dto.AuthUser;
 import com.example.chackchack.domain.review.dto.request.ReviewCreateRequest;
 import com.example.chackchack.domain.review.dto.request.ReviewUpdateRequest;
 import com.example.chackchack.domain.review.dto.response.ReviewCreateResponse;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,12 +27,10 @@ public class ReviewController {
 
     @PostMapping("/{bookId}/reviews")
     public ResponseEntity<ApiResponse<ReviewCreateResponse>> createReview(@PathVariable Long bookId,
-                                                                          @RequestBody ReviewCreateRequest request) {
+                                                                          @RequestBody ReviewCreateRequest request,
+                                                                          @AuthenticationPrincipal AuthUser authUser) {
 
-        // TODO 임시 userId 제거 -> 인증인가 완료시 대체
-        Long userId = 1L;
-
-        ReviewCreateResponse createdReview = reviewInternalService.createReview(request, userId, bookId);
+        ReviewCreateResponse createdReview = reviewInternalService.createReview(request, authUser.getId(), bookId);
         return ApiResponse.created("새로운 리뷰가 작성되었습니다.", createdReview);
     }
 
@@ -66,10 +66,10 @@ public class ReviewController {
     public ResponseEntity<ApiPageResponse<ReviewPageResponse>> getMyReviews(@PageableDefault(
                                                                                     sort = "createdAt",
                                                                                     direction = Sort.Direction.DESC
-                                                                            ) Pageable pageable) {
+                                                                            ) Pageable pageable,
+                                                                            @AuthenticationPrincipal AuthUser authUser) {
 
-        // TODO 임시 userId 제거 -> 인증인가 완료시 대체
-        Page<ReviewPageResponse> pagedReviews = reviewInternalService.getMyReviews(pageable, 1L);
+        Page<ReviewPageResponse> pagedReviews = reviewInternalService.getMyReviews(pageable, authUser.getId());
         return ApiPageResponse.ok(pagedReviews);
     }
 }
