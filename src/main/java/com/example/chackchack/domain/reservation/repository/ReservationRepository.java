@@ -23,6 +23,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @EntityGraph(attributePaths = {"user","bookItem"})
     Page<Reservation> findAllbyOrderByCreatedAtDesc(Pageable pageable);
 
+    // 상태별 예약 목록 조회(관리자)
+    @EntityGraph(attributePaths = {"user", "bookItem"})
+    Page<Reservation> findByReservationStatusOrderByCreatedAtDesc(ReservationStatus reservationStatus, Pageable pageable);
+
+
     //특정 도서의 대기열 조회
     @EntityGraph(attributePaths = {"user","bookItem"})
     List<Reservation> findByBookItemIdAndStatusOrderByPriorityAsc(Long bookItemId, ReservationStatus reservationStatus);
