@@ -11,6 +11,7 @@ import com.example.chackchack.domain.search.service.SearchKeywordExternalService
 import com.example.chackchack.domain.user.entity.User;
 import com.example.chackchack.domain.user.service.UserExternalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ public class BookInternalService {
     private final BookExternalService bookExternalService;
     private final SearchKeywordExternalService searchKeywordExternalService;
 
+    @Transactional
     public BookResponse createBook(AuthUser user,
                                    BookRequest bookRequest) {
 
@@ -70,18 +72,16 @@ public class BookInternalService {
 
 
     // v1 - 캐시 없음
+    @Transactional(readOnly = true)
     public List<BookResponse> findBookList(String keyword,
                                            int page,
                                            int size
     ) {
         Pageable pageRequest = PageRequest.of(page, size);
 
-        // 인기 검색어 저장/업데이트
-        if (keyword != null && !keyword.isBlank()) {
-            searchKeywordExternalService.recordSearch(keyword);
-        }
+        searchKeywordExternalService.recordSearch(keyword);
 
-        Page<Book> bookPage = bookRepository.findByTitleContainingIgnoreCase(keyword, pageRequest);
+        Page<Book> bookPage = bookRepository.findByTitleContainingIgnoreCase(keyword == null ? "" : keyword, pageRequest);
 
         List<BookResponse> bookResponseList = bookPage
                 .stream()
@@ -89,6 +89,28 @@ public class BookInternalService {
                 .toList();
 
         return bookResponseList;
+    }
+
+    // v2 - 캐시 있음
+    @Cacheable(value = "book:search:keyword",
+            key = "#keyword + '_' + #page + '_' + #size",
+            condition = "#page < 10",
+            unless = "#result == null || #result.isEmpty()")
+    @Transactional(readOnly = true)
+    public List<BookResponse> getBookListCached(String keyword, int page, int size) {
+        Pageable pageRequest = PageRequest.of(page, size);
+        Page<Book> bookPage = bookRepository.findByTitleContainingIgnoreCase(
+                keyword == null ? "" : keyword, pageRequest
+        );
+        return bookPage.stream()
+                .map(BookResponse::BookResponseFrom)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookResponse> findBookListWithCache(String keyword, int page, int size) {
+        searchKeywordExternalService.recordSearch(keyword);
+        return getBookListCached(keyword, page, size);
     }
 
     public BookResponse findBook(Long bookId) {
