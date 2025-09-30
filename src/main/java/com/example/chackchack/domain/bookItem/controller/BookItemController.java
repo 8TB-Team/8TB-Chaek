@@ -3,7 +3,7 @@ package com.example.chackchack.domain.bookItem.controller;
 import com.example.chackchack.common.dto.response.ApiResponse;
 import com.example.chackchack.domain.bookItem.dto.request.BookItemRequest;
 import com.example.chackchack.domain.bookItem.dto.response.BookItemResponse;
-import com.example.chackchack.domain.bookItem.service.internalService.BookItemInternalService;
+import com.example.chackchack.domain.bookItem.service.BookItemInternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
