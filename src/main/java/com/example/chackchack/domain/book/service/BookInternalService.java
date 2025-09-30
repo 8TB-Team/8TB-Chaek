@@ -7,13 +7,14 @@ import com.example.chackchack.domain.book.exception.BookErrorCode;
 import com.example.chackchack.domain.book.exception.BookException;
 import com.example.chackchack.domain.book.repository.BookRepository;
 import com.example.chackchack.domain.common.dto.AuthUser;
+import com.example.chackchack.domain.search.service.SearchKeywordExternalService;
 import com.example.chackchack.domain.user.entity.User;
-import com.example.chackchack.domain.user.enums.UserRole;
 import com.example.chackchack.domain.user.service.UserExternalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,28 +29,30 @@ public class BookInternalService {
     private final UserExternalService userExternalService;
     private final BookRepository bookRepository;
     private final BookExternalService bookExternalService;
+    private final SearchKeywordExternalService searchKeywordExternalService;
 
+    @Transactional
     public BookResponse createBook(AuthUser user,
-                                   BookRequest bookRequest){
+                                   BookRequest bookRequest) {
 
         User findUser = userExternalService.findUserByIdOrElseThrow(user.getId());
         if (!findUser.getUserRole().equals(ROLE_ADMIN)) {
             throw new BookException(BookErrorCode.BOOK_NOT_ALLOWED);
         }
 
-            Book book = Book.toEntityFrom(bookRequest);
+        Book book = Book.toEntityFrom(bookRequest);
 
-            bookRepository.save(book);
+        bookRepository.save(book);
 
-            BookResponse response = BookResponse.BookResponseFrom(book);
+        BookResponse response = BookResponse.BookResponseFrom(book);
 
-            return response;
+        return response;
     }
 
     @Transactional
     public BookResponse updateBook(Long bookId,
                                    BookRequest bookRequest,
-                                   AuthUser user){
+                                   AuthUser user) {
 
         User findUser = userExternalService.findUserByIdOrElseThrow(user.getId());
         if (!findUser.getUserRole().equals(ROLE_ADMIN)) {
@@ -67,13 +70,18 @@ public class BookInternalService {
         return response;
     }
 
+
+    // v1 - 캐시 없음
+    @Transactional(readOnly = true)
     public List<BookResponse> findBookList(String keyword,
                                            int page,
                                            int size
-    ){
-        PageRequest pageRequest = PageRequest.of(page,size);
+    ) {
+        Pageable pageRequest = PageRequest.of(page, size);
 
-        Page<Book> bookPage = bookRepository.findByTitleContaining(keyword,pageRequest);
+        searchKeywordExternalService.recordSearch(keyword);
+
+        Page<Book> bookPage = bookRepository.findByTitleContainingIgnoreCase(keyword == null ? "" : keyword, pageRequest);
 
         List<BookResponse> bookResponseList = bookPage
                 .stream()
@@ -83,14 +91,36 @@ public class BookInternalService {
         return bookResponseList;
     }
 
-    public BookResponse findBook(Long bookId){
+    // v2 - 캐시 있음
+    @Cacheable(value = "book:search:keyword",
+            key = "#keyword + '_' + #page + '_' + #size",
+            condition = "#page < 10",
+            unless = "#result == null || #result.isEmpty()")
+    @Transactional(readOnly = true)
+    public List<BookResponse> getBookListCached(String keyword, int page, int size) {
+        Pageable pageRequest = PageRequest.of(page, size);
+        Page<Book> bookPage = bookRepository.findByTitleContainingIgnoreCase(
+                keyword == null ? "" : keyword, pageRequest
+        );
+        return bookPage.stream()
+                .map(BookResponse::BookResponseFrom)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookResponse> findBookListWithCache(String keyword, int page, int size) {
+        searchKeywordExternalService.recordSearch(keyword);
+        return getBookListCached(keyword, page, size);
+    }
+
+    public BookResponse findBook(Long bookId) {
 
         Book book = bookExternalService.findByBookIdOrElseThrow(bookId);
 
         return BookResponse.BookResponseFrom(book);
     }
 
-    public void deleteBook(Long Id,AuthUser user) {
+    public void deleteBook(Long Id, AuthUser user) {
 
         User findUser = userExternalService.findUserByIdOrElseThrow(user.getId());
 
