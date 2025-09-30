@@ -17,11 +17,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     //사용자 예약 목록 조회
     @EntityGraph(attributePaths = {"user","bookItem"})
-    Page<Reservation> findByBookItemId(Long bookItemId, Pageable pageable);
+    Page<Reservation> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
     //전체 예약 목록 조회(관리자)
     @EntityGraph(attributePaths = {"user","bookItem"})
-    Page<Reservation> findAllbyOrderByCreatedAtDesc(Pageable pageable);
+    Page<Reservation> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     // 상태별 예약 목록 조회(관리자)
     @EntityGraph(attributePaths = {"user", "bookItem"})
@@ -30,7 +30,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     //특정 도서의 대기열 조회
     @EntityGraph(attributePaths = {"user","bookItem"})
-    List<Reservation> findByBookItemIdAndStatusOrderByPriorityAsc(Long bookItemId, ReservationStatus reservationStatus);
+    List<Reservation> findByBookItemIdAndReservationStatusOrderByPriorityAsc(Long bookItemId, ReservationStatus reservationStatus);
 
     //특정 도서의 다음 우선순위 예약 조회
     @EntityGraph(attributePaths = {"user","bookItem"})
@@ -48,7 +48,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findExpiredReservations();
 
     // 사용자의 특정 도서 예약 존재 여부
-    boolean existsByUserIdAndBookItemIdAndStatus(Long userId, Long bookItemId, ReservationStatus status);
+    boolean existsByUserIdAndBookItemIdAndReservationStatus(Long userId, Long bookItemId, ReservationStatus status);
 
 
 }
