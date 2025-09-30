@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReservationResponse {
     private final Long id;
-    private final User userId;
-    private final BookItem bookItemId;
+    private final Long userId;
+    private final Long bookItemId;
     private final ReservationStatus status;
     private final Integer priority;
     private final LocalDateTime rentTimeout;
@@ -27,8 +27,8 @@ public class ReservationResponse {
     public static ReservationResponse from(Reservation reservation) {
         return new ReservationResponse(
                 reservation.getId(),
-                reservation.getUser(),
-                reservation.getBookItem(),
+                reservation.getUser().getId(),
+                reservation.getBookItem().getId(),
                 reservation.getReservationStatus(),
                 reservation.getPriority(),
                 reservation.getRentTimeout(),
