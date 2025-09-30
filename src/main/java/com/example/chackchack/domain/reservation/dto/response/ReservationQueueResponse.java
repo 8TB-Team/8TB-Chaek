@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReservationQueueResponse {
-    private BookItem bookItemId;
+    private Long bookItemId;
     private Integer totalReaservationWaiting;
     private List<QueueItem> queue;
 
@@ -25,7 +25,7 @@ public class ReservationQueueResponse {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class QueueItem {
         private Long id;
-        private User user;
+        private Long user;
         private Integer priority;
         private Integer queuePositon;
         private LocalDateTime createdAt;
@@ -33,14 +33,14 @@ public class ReservationQueueResponse {
         public static QueueItem of(Reservation reservation, Integer queuePositon) {
             return new QueueItem(
                     reservation.getId(),
-                    reservation.getUser(),
+                    reservation.getUser().getId(),
                     reservation.getPriority(),
                     queuePositon,
                     reservation.getCreatedAt()
             );
         }
     }
-    public static ReservationQueueResponse of(BookItem bookItem, Integer totalReaservationWaiting, List<QueueItem> queue) {
-        return new ReservationQueueResponse(bookItem, totalReaservationWaiting, queue);
+    public static ReservationQueueResponse of(Long bookItemId, Integer totalReaservationWaiting, List<QueueItem> queue) {
+        return new ReservationQueueResponse(bookItemId, totalReaservationWaiting, queue);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.chackchack.domain.bookItem.service.internalService;
+package com.example.chackchack.domain.bookItem.service;
 
 import com.example.chackchack.domain.book.entity.Book;
 import com.example.chackchack.domain.book.service.BookExternalServiceImpl;
