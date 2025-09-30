@@ -6,10 +6,12 @@ import com.example.chackchack.domain.bookItem.exception.InvalidBookItemException
 import com.example.chackchack.domain.bookItem.repository.BookItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class BookExternalServiceImpl implements BookItemExternalService {
+@Transactional(readOnly = true)
+public class BookItemExternalServiceImpl implements BookItemExternalService {
     
     private final BookItemRepository bookItemRepository;
     
