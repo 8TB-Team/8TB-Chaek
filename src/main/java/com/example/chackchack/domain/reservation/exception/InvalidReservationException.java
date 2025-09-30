@@ -1,7 +1,10 @@
 package com.example.chackchack.domain.reservation.exception;
 
-public class InvalidReservationException extends RuntimeException {
-    public InvalidReservationException(String message) {
-        super(message);
+import com.example.chackchack.common.exception.ErrorCode;
+import com.example.chackchack.common.exception.GlobalException;
+
+public class InvalidReservationException extends GlobalException {
+    public InvalidReservationException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
