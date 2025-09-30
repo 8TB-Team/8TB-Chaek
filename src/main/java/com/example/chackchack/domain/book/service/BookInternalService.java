@@ -3,34 +3,58 @@ package com.example.chackchack.domain.book.service;
 import com.example.chackchack.domain.book.dto.request.BookRequest;
 import com.example.chackchack.domain.book.dto.response.BookResponse;
 import com.example.chackchack.domain.book.entity.Book;
+import com.example.chackchack.domain.book.exception.BookErrorCode;
+import com.example.chackchack.domain.book.exception.BookException;
 import com.example.chackchack.domain.book.repository.BookRepository;
+import com.example.chackchack.domain.common.dto.AuthUser;
+import com.example.chackchack.domain.user.entity.User;
+import com.example.chackchack.domain.user.enums.UserRole;
+import com.example.chackchack.domain.user.service.UserExternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.example.chackchack.domain.user.enums.UserRole.ROLE_ADMIN;
 
 @Service
 @RequiredArgsConstructor
 public class BookInternalService {
 
+    private final UserExternalService userExternalService;
     private final BookRepository bookRepository;
     private final BookExternalService bookExternalService;
 
-    public BookResponse createBook(BookRequest bookRequest){
+    public BookResponse createBook(AuthUser user,
+                                   BookRequest bookRequest){
 
-        Book book = Book.toEntityFrom(bookRequest);
+        User findUser = userExternalService.findUserByIdOrElseThrow(user.getId());
+        if (!findUser.getUserRole().equals(ROLE_ADMIN)) {
+            throw new BookException(BookErrorCode.BOOK_NOT_ALLOWED);
+        }
 
-        bookRepository.save(book);
+            Book book = Book.toEntityFrom(bookRequest);
 
-        BookResponse response = BookResponse.BookResponseFrom(book);
+            bookRepository.save(book);
 
-        return response;
+            BookResponse response = BookResponse.BookResponseFrom(book);
+
+            return response;
     }
 
     @Transactional
     public BookResponse updateBook(Long bookId,
-                                   BookRequest bookRequest){
+                                   BookRequest bookRequest,
+                                   AuthUser user){
+
+        User findUser = userExternalService.findUserByIdOrElseThrow(user.getId());
+        if (!findUser.getUserRole().equals(ROLE_ADMIN)) {
+            throw new BookException(BookErrorCode.BOOK_NOT_ALLOWED);
+        }
 
         Book book = bookExternalService.findByBookIdOrElseThrow(bookId);
 
@@ -43,7 +67,7 @@ public class BookInternalService {
         return response;
     }
 
-    public Page<BookResponse> findBookList(String keyword,
+    public List<BookResponse> findBookList(String keyword,
                                            int page,
                                            int size
     ){
@@ -51,9 +75,12 @@ public class BookInternalService {
 
         Page<Book> bookPage = bookRepository.findByTitleContaining(keyword,pageRequest);
 
-        Page<BookResponse> bookResponses = BookResponse.fromPage(bookPage);
+        List<BookResponse> bookResponseList = bookPage
+                .stream()
+                .map(BookResponse::BookResponseFrom)
+                .toList();
 
-        return bookResponses;
+        return bookResponseList;
     }
 
     public BookResponse findBook(Long bookId){
@@ -63,8 +90,15 @@ public class BookInternalService {
         return BookResponse.BookResponseFrom(book);
     }
 
-    public void deleteBook(Long bookId) {
-        bookRepository.deleteById(bookId);
+    public void deleteBook(Long Id,AuthUser user) {
+
+        User findUser = userExternalService.findUserByIdOrElseThrow(user.getId());
+
+        if (!findUser.getUserRole().equals(ROLE_ADMIN)) {
+            throw new BookException(BookErrorCode.BOOK_NOT_ALLOWED);
+        }
+
+        bookRepository.deleteById(Id);
     }
 
 }
