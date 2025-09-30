@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "search_keyword")
 public class SearchKeyword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
