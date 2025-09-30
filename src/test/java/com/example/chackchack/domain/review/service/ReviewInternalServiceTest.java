@@ -55,11 +55,7 @@ public class ReviewInternalServiceTest {
     @BeforeEach
     void setUp() {
         user = new User("test@gmail.com", "password", "nickname", UserRole.ROLE_USER);
-        book = Book.builder()
-                .author("author")
-                .category("category")
-                .title("title")
-                .build();
+        book = new Book("author", "category", "title");
         reviewCreateRequest = new ReviewCreateRequest("content", 5);
         review = Review.of(reviewCreateRequest, user, book);
 
