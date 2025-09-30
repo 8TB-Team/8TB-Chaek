@@ -77,7 +77,9 @@ public class BookInternalService {
         Pageable pageRequest = PageRequest.of(page, size);
 
         // 인기 검색어 저장/업데이트
-        searchKeywordExternalService.recordSearch(keyword);
+        if (keyword != null && !keyword.isBlank()) {
+            searchKeywordExternalService.recordSearch(keyword);
+        }
 
         Page<Book> bookPage = bookRepository.findByTitleContainingIgnoreCase(keyword, pageRequest);
 
