@@ -33,12 +33,12 @@ public class Reservation extends BaseEntity {
     private ReservationStatus reservationStatus = ReservationStatus.WAITING;
 
     @Column(name = "priority", nullable = false)
-    private String priority;
+    private Integer priority;
 
     @Column(name = "rent_timeout")
     private LocalDateTime rentTimeout;
 
-    private Reservation(User user, BookItem bookItem, ReservationStatus reservationStatus,String priority, LocalDateTime rentTimeout) {
+    private Reservation(User user, BookItem bookItem, ReservationStatus reservationStatus,Integer priority, LocalDateTime rentTimeout) {
         this.user = user;
         this.bookItem = bookItem;
         this.reservationStatus = reservationStatus;
@@ -47,7 +47,7 @@ public class Reservation extends BaseEntity {
 
     }
 
-    public static Reservation of (User user, BookItem bookItem, String priority) {
+    public static Reservation of (User user, BookItem bookItem, Integer priority) {
         return new Reservation(
                 user,
                 bookItem,
@@ -72,7 +72,7 @@ public class Reservation extends BaseEntity {
 
     public void setRentTimeout(LocalDateTime rentTimeout) {this.rentTimeout = rentTimeout;}
 
-    public void updatePriority(String priority) {
+    public void updatePriority(Integer priority) {
         this.priority = priority;
     }
 }

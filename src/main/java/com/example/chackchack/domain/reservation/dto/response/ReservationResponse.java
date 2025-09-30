@@ -20,7 +20,7 @@ public class ReservationResponse {
     private final User userId;
     private final BookItem bookItemId;
     private final ReservationStatus status;
-    private final String priority;
+    private final Integer priority;
     private final LocalDateTime rentTimeout;
     private final LocalDateTime createdAt;
 

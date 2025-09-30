@@ -26,7 +26,7 @@ public class ReservationQueueResponse {
     public static class QueueItem {
         private Long id;
         private User user;
-        private String priority;
+        private Integer priority;
         private Integer queuePositon;
         private LocalDateTime createdAt;
 
