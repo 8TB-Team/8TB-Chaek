@@ -3,6 +3,8 @@ package com.example.chackchack.domain.flashEvent.service;
 import com.example.chackchack.domain.flashEvent.dto.request.EventCreateRequest;
 import com.example.chackchack.domain.flashEvent.entity.EventMap;
 import com.example.chackchack.domain.flashEvent.entity.EventUserMap;
+import com.example.chackchack.domain.flashEvent.exception.EventErrorCode;
+import com.example.chackchack.domain.flashEvent.exception.EventException;
 import com.example.chackchack.domain.flashEvent.repository.EventMapRepository;
 import com.example.chackchack.domain.flashEvent.repository.EventUserMapRepository;
 import com.example.chackchack.domain.user.entity.User;
@@ -34,8 +36,7 @@ public class FlashEventService {
         int currentParticipants = eventUserMapRepository.countByEventMap(event);
 
         if (currentParticipants >= event.getMaxParticipants())
-            // TODO 예외 처리
-            throw new IllegalStateException("참여자 수가 최대 인원에 도달했습니다.");
+            throw new EventException(EventErrorCode.EVENT_USER_FULL);
 
         User user = userExternalService.findUserByIdOrElseThrow(userId);
         EventUserMap registerUser = EventUserMap.of(user, event);
@@ -45,7 +46,7 @@ public class FlashEventService {
 
     public EventMap findEventMapOrElseThrow(Long eventId) {
 
-        // TODO 예외 처리
-        return eventMapRepository.findByIdWithDistributedLock(eventId).orElseThrow(RuntimeException::new);
+        return eventMapRepository.findByIdWithDistributedLock(eventId)
+                .orElseThrow(() -> new EventException(EventErrorCode.EVENT_NOT_FOUND));
     }
 }
