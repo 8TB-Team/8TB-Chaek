@@ -60,15 +60,6 @@ public interface ReservationExternalService {
     Page<ReservationResponse> getAllReservations(ReservationStatus status, Pageable pageable);
 
     /**
-     * 예약 알림 전송
-     *
-     * @param reservationId 예약 ID
-     * @return 알림 응답
-     * @throws com.example.chackchack.domain.reservation.exception.InvalidReservationException 예약을 찾을수 없는 경우(RESERVATION_NOT_FOUND)
-     */
-    ReservationNotificationResponse sendReservationNotification(Long reservationId);
-
-    /**
      * 다음 예약자에 대여 가능 상태로 변경
      * Rental 도메인에서 반납 완료 후 호출
      *

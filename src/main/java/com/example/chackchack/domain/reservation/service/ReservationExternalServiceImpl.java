@@ -2,12 +2,15 @@ package com.example.chackchack.domain.reservation.service;
 
 import com.example.chackchack.domain.bookItem.entity.BookItem;
 import com.example.chackchack.domain.bookItem.service.BookItemExternalService;
+import com.example.chackchack.domain.rental.service.RentalExternalService;
 import com.example.chackchack.domain.reservation.dto.request.ReservationCreateRequest;
 import com.example.chackchack.domain.reservation.dto.response.ReservationNotificationResponse;
 import com.example.chackchack.domain.reservation.dto.response.ReservationQueueResponse;
 import com.example.chackchack.domain.reservation.dto.response.ReservationResponse;
 import com.example.chackchack.domain.reservation.entity.Reservation;
 import com.example.chackchack.domain.reservation.entity.ReservationStatus;
+import com.example.chackchack.domain.reservation.exception.InvalidReservationException;
+import com.example.chackchack.domain.reservation.exception.ReservationErrorCode;
 import com.example.chackchack.domain.reservation.repository.ReservationRepository;
 import com.example.chackchack.domain.user.entity.User;
 import com.example.chackchack.domain.user.service.UserExternalService;
@@ -32,14 +35,20 @@ public class ReservationExternalServiceImpl implements ReservationExternalServic
     private final ReservationInternalService reservationInternalService;
     private final UserExternalService userExternalService;
     private final BookItemExternalService bookItemExternalService;
+    private final RentalExternalService rentalExternalService;
 
     /**
      * 도서 예약 등록
      */
     @Override
+    @Transactional
     public ReservationResponse createReservation(Long userId, ReservationCreateRequest request) {
         // BookItem 조회
         BookItem bookItem = bookItemExternalService.findBySerialNumberOrThrows(request.getSerialNumber());
+        // 도서 예약 가능 여부
+        if (!rentalExternalService.isBookReservable(bookItem.getId())){
+            throw new InvalidReservationException(ReservationErrorCode.BOOK_NOT_AVAILABLE);
+        }
         // 예약 중복 검증
         reservationInternalService.validateDuplicateReservation(userId, bookItem.getId());
         // 유저 조회
@@ -128,27 +137,18 @@ public class ReservationExternalServiceImpl implements ReservationExternalServic
 
     @Override
     @Transactional
-    public ReservationNotificationResponse sendReservationNotification(Long reservationId) {
-        // 예약 조회
-        Reservation reservation = reservationInternalService.findByIdOrThrow(reservationId);
-
-        // 상태별 알림 메시지 생성
-        String message = reservationInternalService.buildNotificationMessage(reservation);
-
-        // 알림 응답 반환
-        return ReservationNotificationResponse.of(reservation, message);
-    }
-
-    @Override
-    @Transactional
     public void notifyNextReservation(Long bookItemId) {
 
         reservationRepository.findFirstByBookItemIdAndReservationStatusOrderByPriorityAsc(
                         bookItemId, ReservationStatus.WAITING)
                 .ifPresent(
                         reservation -> {
+                            //예약 상태 변경
                             reservation.available();
                             reservation.setRentTimeout(LocalDateTime.now().plusHours(RENT_TIMEOUT_HOURS));
+
+                            // 알림 전송
+                            reservationInternalService.sendNotification(reservation);
                         }
                 );
     }

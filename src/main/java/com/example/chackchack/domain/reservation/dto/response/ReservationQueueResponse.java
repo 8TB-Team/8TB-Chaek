@@ -25,7 +25,7 @@ public class ReservationQueueResponse {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class QueueItem {
         private Long id;
-        private Long user;
+        private Long userid;
         private Integer priority;
         private Integer queuePositon;
         private LocalDateTime createdAt;

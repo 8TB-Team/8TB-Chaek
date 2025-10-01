@@ -109,6 +109,9 @@ public class ReservationInternalService {
             reservation.expire();
             log.info("예약 만료 처리 : {} ", bookItemId);
 
+            // 만료 알림 전송
+            sendNotification(reservation);
+
             // 다음 대기자에게 알림
             reservationRepository.findFirstByBookItemIdAndReservationStatusOrderByPriorityAsc(bookItemId, ReservationStatus.WAITING)
                     .ifPresent(nextReservation -> {
@@ -119,17 +122,34 @@ public class ReservationInternalService {
     }
 
     public String buildNotificationMessage(Reservation reservation) {
-        return switch (reservation.getReservationStatus()){
+        String bookTitle = reservation.getBookItem().getBook().getTitle();
+
+        return switch (reservation.getReservationStatus()) {
             case AVAILABLE -> String.format(
-                    "예약하신 도서를 대여하실 수 있습니다 마감 %s",
+                    "[%s] 예약하신 도서를 대여하실 수 있습니다 마감 %s",
+                    bookTitle,
                     reservation.getRentTimeout()
             );
             case WAITING -> String.format(
-                    "현재 대기 순번: %d번",
+                    "[%s] 현재 대기 순번: %d번",
+                    bookTitle,
                     reservation.getPriority()
             );
-            case COMPLETED ->  "도서 대여가 완료 되었습니다.";
-            case EXPIRED ->  "예약이 만료 되었습니다.";
+            case COMPLETED -> String.format("[%s] 도서 대여가 완료 되었습니다.",
+                    bookTitle
+            );
+            case EXPIRED -> String.format("[%s] 예약이 만료 되었습니다.",
+                    bookTitle
+            );
         };
+    }
+
+    public void sendNotification(Reservation reservation) {
+        String message = buildNotificationMessage(reservation);
+
+        log.info("=== 알림 전송 ===");
+        log.info("수신자 : 사용자 ID {}",reservation.getUser().getId());
+        log.info("내용 : {}", message);
+
     }
 }
