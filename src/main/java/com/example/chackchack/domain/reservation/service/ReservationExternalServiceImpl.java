@@ -1,5 +1,6 @@
 package com.example.chackchack.domain.reservation.service;
 
+import com.example.chackchack.common.lock.service.LockService;
 import com.example.chackchack.domain.bookItem.entity.BookItem;
 import com.example.chackchack.domain.bookItem.service.BookItemExternalService;
 import com.example.chackchack.domain.rental.service.RentalExternalService;
@@ -36,6 +37,7 @@ public class ReservationExternalServiceImpl implements ReservationExternalServic
     private final UserExternalService userExternalService;
     private final BookItemExternalService bookItemExternalService;
     private final RentalExternalService rentalExternalService;
+    private final LockService lockService;
 
     /**
      * 도서 예약 등록
@@ -43,23 +45,27 @@ public class ReservationExternalServiceImpl implements ReservationExternalServic
     @Override
     @Transactional
     public ReservationResponse createReservation(Long userId, ReservationCreateRequest request) {
-        // BookItem 조회
-        BookItem bookItem = bookItemExternalService.findBySerialNumberOrThrows(request.getSerialNumber());
-        // 도서 예약 가능 여부
-        if (!rentalExternalService.isBookReservable(bookItem.getId())){
-            throw new InvalidReservationException(ReservationErrorCode.BOOK_NOT_AVAILABLE);
-        }
-        // 예약 중복 검증
-        reservationInternalService.validateDuplicateReservation(userId, bookItem.getId());
-        // 유저 조회
-        User user = userExternalService.findUserByIdOrElseThrow(userId);
-        // 우선 순위 계산
-        Integer priority = reservationInternalService.calculatePriority(bookItem.getId());
-        // 예약 생성
-        Reservation reservation = Reservation.of(user, bookItem, priority);
-        Reservation savedReservation = reservationRepository.save(reservation);
+        String lockKey = "reservation:book" + request.getSerialNumber();
 
-        return ReservationResponse.from(savedReservation);
+        return lockService.executeWithLock(lockKey, () -> {
+            // BookItem 조회
+            BookItem bookItem = bookItemExternalService.findBySerialNumberOrThrows(request.getSerialNumber());
+            // 도서 예약 가능 여부
+//        if (!rentalExternalService.isBookReservable(bookItem.getId())){
+//            throw new InvalidReservationException(ReservationErrorCode.BOOK_NOT_AVAILABLE);
+//        }
+            // 예약 중복 검증
+            reservationInternalService.validateDuplicateReservation(userId, bookItem.getId());
+            // 유저 조회
+            User user = userExternalService.findUserByIdOrElseThrow(userId);
+            // 우선 순위 계산
+            Integer priority = reservationInternalService.calculatePriority(bookItem.getId());
+            // 예약 생성
+            Reservation reservation = Reservation.of(user, bookItem, priority);
+            Reservation savedReservation = reservationRepository.save(reservation);
+
+            return ReservationResponse.from(savedReservation);
+        });
     }
 
     /**

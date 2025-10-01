@@ -13,4 +13,8 @@ public class ReservationCreateRequest {
 
     @NotBlank(message = "Serial Number를 입력해 주세요.")
     private String serialNumber;
+
+    public ReservationCreateRequest(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
 }

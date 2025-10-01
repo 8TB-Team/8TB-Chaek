@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookItemExternalServiceImpl implements BookItemExternalService {
     
     private final BookItemRepository bookItemRepository;
-    
+
     @Override
     public BookItem findBySerialNumberOrThrows(String serialNumber) {
         return bookItemRepository.findBySerialNumber(serialNumber)
