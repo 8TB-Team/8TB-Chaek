@@ -4,6 +4,7 @@ import com.example.chackchack.domain.flashEvent.dto.request.EventCreateRequest;
 import com.example.chackchack.domain.flashEvent.dto.response.EventCreateResponse;
 import com.example.chackchack.domain.flashEvent.entity.EventMap;
 import com.example.chackchack.domain.flashEvent.entity.EventUserMap;
+import com.example.chackchack.domain.flashEvent.enums.EventStatus;
 import com.example.chackchack.domain.flashEvent.exception.EventErrorCode;
 import com.example.chackchack.domain.flashEvent.exception.EventException;
 import com.example.chackchack.domain.flashEvent.repository.EventMapRepository;
@@ -47,6 +48,13 @@ public class FlashEventService {
         EventUserMap registerUser = EventUserMap.of(user, event);
 
         eventUserMapRepository.save(registerUser);
+    }
+
+    @Transactional
+    public void updateEventStatus(Long eventId, EventStatus eventStatus) {
+
+        EventMap event = findEventMapOrElseThrow(eventId);
+        event.updateStatus(eventStatus);
     }
 
     public EventMap findEventMapOrElseThrow(Long eventId) {
