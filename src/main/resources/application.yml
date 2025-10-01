@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/${DB_NAME}
+    url: jdbc:mysql://localhost:3306/${DB_NAME}?rewriteBatchedStatements=true&connectTimeout=60000&socketTimeout=300000
     username: ${USER_NAME}
     password: ${PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -9,9 +9,23 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
+        jdbc:
+          batch_size: 1000
         show_sql: true
         format_sql: true
+        order_updates: true
+        order_inserts: true
+        batch_versioned_data: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 jwt:
   secret:
     key: "${SECRET_KEY}"
+
+logging:
+  level:
+    org.springframework.cache: TRACE
+    org.springframework.data.redis: DEBUG
