@@ -8,10 +8,10 @@ import com.example.chackchack.domain.book.exception.BookException;
 import com.example.chackchack.domain.book.repository.BookRepository;
 import com.example.chackchack.domain.common.dto.AuthUser;
 import com.example.chackchack.domain.search.service.SearchKeywordExternalService;
+import com.example.chackchack.domain.search.service.SearchKeywordRedisService;
 import com.example.chackchack.domain.user.entity.User;
 import com.example.chackchack.domain.user.service.UserExternalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +30,8 @@ public class BookInternalService {
     private final BookRepository bookRepository;
     private final BookExternalService bookExternalService;
     private final SearchKeywordExternalService searchKeywordExternalService;
+    private final BookCacheService bookCacheService;
+    private final SearchKeywordRedisService searchKeywordRedisService;
 
     @Transactional
     public BookResponse createBook(AuthUser user,
@@ -92,25 +94,12 @@ public class BookInternalService {
     }
 
     // v2 - 캐시 있음
-    @Cacheable(value = "book:search:keyword",
-            key = "#keyword + '_' + #page + '_' + #size",
-            condition = "#page < 10",
-            unless = "#result == null || #result.isEmpty()")
-    @Transactional(readOnly = true)
-    public List<BookResponse> getBookListCached(String keyword, int page, int size) {
-        Pageable pageRequest = PageRequest.of(page, size);
-        Page<Book> bookPage = bookRepository.findByTitleContainingIgnoreCase(
-                keyword == null ? "" : keyword, pageRequest
-        );
-        return bookPage.stream()
-                .map(BookResponse::BookResponseFrom)
-                .toList();
-    }
-
     @Transactional(readOnly = true)
     public List<BookResponse> findBookListWithCache(String keyword, int page, int size) {
-        searchKeywordExternalService.recordSearch(keyword);
-        return getBookListCached(keyword, page, size);
+        searchKeywordRedisService.incrementKeyword(keyword);
+        List<BookResponse> result = bookCacheService.getBookListCached(keyword, page, size);
+
+        return result;
     }
 
     public BookResponse findBook(Long bookId) {
