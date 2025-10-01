@@ -1,6 +1,7 @@
 package com.example.chackchack.domain.flashEvent.service;
 
 import com.example.chackchack.domain.flashEvent.dto.request.EventCreateRequest;
+import com.example.chackchack.domain.flashEvent.dto.response.EventCreateResponse;
 import com.example.chackchack.domain.flashEvent.entity.EventMap;
 import com.example.chackchack.domain.flashEvent.entity.EventUserMap;
 import com.example.chackchack.domain.flashEvent.exception.EventErrorCode;
@@ -24,9 +25,13 @@ public class FlashEventService {
     private final UserExternalService userExternalService;
 
     @Transactional
-    public void createNewEvent(EventCreateRequest request) {
+    public EventCreateResponse createNewEvent(EventCreateRequest request) {
+
         EventMap event = EventMap.from(request);
-        eventMapRepository.save(event);
+
+        EventMap createdEvent = eventMapRepository.save(event);
+
+        return EventCreateResponse.of(createdEvent);
     }
 
     @Transactional
