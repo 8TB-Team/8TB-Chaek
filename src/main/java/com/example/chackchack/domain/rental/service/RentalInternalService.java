@@ -11,6 +11,7 @@ import com.example.chackchack.domain.rental.enums.RentalStatus;
 import com.example.chackchack.domain.rental.exception.InvalidRentalException;
 import com.example.chackchack.domain.rental.exception.RentalErrorCode;
 import com.example.chackchack.domain.rental.repository.RentalRepository;
+import com.example.chackchack.domain.reservation.service.ReservationExternalService;
 import com.example.chackchack.domain.user.entity.User;
 import com.example.chackchack.domain.user.repository.UserRepository;
 import com.example.chackchack.domain.user.service.UserExternalService;
@@ -27,6 +28,7 @@ public class RentalInternalService {
     private final RentalRepository rentalRepository;
     private final UserExternalService userExternalService;
     private final UserRepository userRepository;
+    private final ReservationExternalService reservationExternalService;
 
     @Transactional
     public RentalCreateResponse createRental(RentalCreateRequest request, Long userId) {
@@ -43,7 +45,6 @@ public class RentalInternalService {
         Rental rental = Rental.of(bookItem, user);
         Rental savedRental = rentalRepository.save(rental);
 
-
         return RentalCreateResponse.from(savedRental);
     }
 
@@ -57,6 +58,9 @@ public class RentalInternalService {
         }
 
         rental.returnRental();
+
+        //예약 시스템
+        //reservationExternalService.notifyNextReservation(bookItem.getId());
 
         return RentalUpdateResponse.from(rental);
     }
