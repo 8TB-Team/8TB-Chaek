@@ -19,19 +19,19 @@ import java.time.LocalDateTime;
 
         // 도서별 대기열 조회
         @Index(name = "idx_book_item_status_priority",
-                columnList = "book_item_id,reservation_status, priority ASC"),
+                columnList = "book_item_id, status, priority ASC"),
 
         //만료된 예약 조회
         @Index(name = "idx_status_rent_timeout",
-                columnList = "reservation_status, rent_time_out"),
+                columnList = "status, rent_timeout"),
 
         // 상태별 예약 목록 조회
         @Index(name = "idx_status_created_at",
-                columnList = "reservation_status, created_at_DESC"),
+                columnList = "status, created_at DESC"),
 
         //예약 존재 여부
         @Index(name = "idx_book_item_status",
-        columnList = "book_item_id, reservation_status")
+        columnList = "book_item_id, status")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation extends BaseEntity {
