@@ -1,6 +1,7 @@
 package com.example.chackchack.domain.book.controller;
 
 
+import com.example.chackchack.common.annotation.LogExecutionTime;
 import com.example.chackchack.common.dto.response.ApiResponse;
 import com.example.chackchack.domain.book.dto.request.BookRequest;
 import com.example.chackchack.domain.book.dto.response.BookResponse;
@@ -41,6 +42,7 @@ public class BookController {
     }
 
     // v1 - 캐시 없음 리스트로 찾기
+    @LogExecutionTime("V1 - No Cache")
     @GetMapping("/v1/books")
     public ResponseEntity<ApiResponse<List<BookResponse>>> findBooks(@RequestParam("keyword") String keyword,
                                                                      @RequestParam(defaultValue = "0") int page,
@@ -53,11 +55,13 @@ public class BookController {
 
     // v2 - 캐시 적용 리스트로 찾기
     @GetMapping("/v2/books")
+    @LogExecutionTime("V2 - With Cache")
     public ResponseEntity<ApiResponse<List<BookResponse>>> findBooksV2(@RequestParam(required = false) String keyword,
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int size
     ) {
         List<BookResponse> getBookList = bookService.findBookListWithCache(keyword, page, size);
+
         return ApiResponse.ok(getBookList);
     }
 
