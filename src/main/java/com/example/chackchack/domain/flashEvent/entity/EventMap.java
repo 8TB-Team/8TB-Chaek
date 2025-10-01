@@ -15,10 +15,10 @@ public class EventMap extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "title", nullable = false)
+    @Column(nullable = false)
     String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(nullable = false)
     String description;
 
     @Column(nullable = false)
