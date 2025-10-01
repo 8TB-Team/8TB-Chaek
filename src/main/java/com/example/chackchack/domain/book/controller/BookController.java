@@ -21,7 +21,7 @@ public class BookController {
 
     private final BookInternalService bookService;
 
-    @PostMapping("/v1/books")
+    @PostMapping("/v1/books/admin")
     public ResponseEntity<ApiResponse<BookResponse>> createBook(@AuthenticationPrincipal AuthUser authUser,
                                                                 @RequestBody BookRequest bookRequest) {
 
@@ -31,7 +31,7 @@ public class BookController {
 
     }
 
-    @PatchMapping("/v1/books/{bookId}")
+    @PatchMapping("/v1/books/admin/{bookId}")
     public ResponseEntity<ApiResponse<BookResponse>> updateBook(@RequestBody BookRequest bookRequest,
                                                                 @PathVariable Long bookId,
                                                                 @AuthenticationPrincipal AuthUser authUser) {
@@ -73,7 +73,7 @@ public class BookController {
         return ApiResponse.ok(book);
     }
 
-    @DeleteMapping("/v1/books/{bookId}")
+    @DeleteMapping("/v1/books/admin/{bookId}")
     public void deleteBook(@PathVariable("bookId") Long bookId,
                            @AuthenticationPrincipal AuthUser authuser) {
 

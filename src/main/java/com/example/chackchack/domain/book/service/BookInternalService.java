@@ -37,11 +37,6 @@ public class BookInternalService {
     public BookResponse createBook(AuthUser user,
                                    BookRequest bookRequest) {
 
-        User findUser = userExternalService.findUserByIdOrElseThrow(user.getId());
-        if (!findUser.getUserRole().equals(ROLE_ADMIN)) {
-            throw new BookException(BookErrorCode.BOOK_NOT_ALLOWED);
-        }
-
         Book book = Book.toEntityFrom(bookRequest);
 
         bookRepository.save(book);
@@ -55,11 +50,6 @@ public class BookInternalService {
     public BookResponse updateBook(Long bookId,
                                    BookRequest bookRequest,
                                    AuthUser user) {
-
-        User findUser = userExternalService.findUserByIdOrElseThrow(user.getId());
-        if (!findUser.getUserRole().equals(ROLE_ADMIN)) {
-            throw new BookException(BookErrorCode.BOOK_NOT_ALLOWED);
-        }
 
         Book book = bookExternalService.findByBookIdOrElseThrow(bookId);
 
