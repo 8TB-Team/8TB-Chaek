@@ -1,5 +1,6 @@
 package com.example.chackchack.domain.search.controller;
 
+import com.example.chackchack.common.annotation.LogExecutionTime;
 import com.example.chackchack.common.dto.response.ApiResponse;
 import com.example.chackchack.domain.search.service.SearchKeywordInternalService;
 import com.example.chackchack.domain.search.service.SearchKeywordRedisService;
@@ -20,6 +21,7 @@ public class SearchKeywordController {
     private final SearchKeywordRedisService searchKeywordRedisService;
 
     // V1 - DB 기반 인기 검색어
+    @LogExecutionTime("V1 - search popular")
     @GetMapping("/v1/search/popular")
     public ResponseEntity<ApiResponse<List<String>>> getPopularKeywords() {
         List<String> keywords = searchKeywordInternalService.getPopularKeywords();
@@ -27,6 +29,7 @@ public class SearchKeywordController {
     }
 
     // V2 - Redis 기반 인기 검색어
+    @LogExecutionTime("V2 - search popular")
     @GetMapping("/v2/search/popular")
     public ResponseEntity<ApiResponse<List<String>>> getPopularKeywordsV2(
             @RequestParam(defaultValue = "10") int limit
