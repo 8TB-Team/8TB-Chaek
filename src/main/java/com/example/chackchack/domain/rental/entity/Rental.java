@@ -14,7 +14,13 @@ import java.time.LocalDate;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "rental")
+@Table(
+        name = "rental",
+        indexes = {
+                @Index(name = "idx_rental_book_item_id", columnList = "book_item_id"),
+                @Index(name = "idx_rental_user_id", columnList = "user_id"),
+                @Index(name = "idx_rental_status", columnList = "status")
+        })
 public class Rental extends BaseEntity {
 
     @Id
@@ -43,6 +49,13 @@ public class Rental extends BaseEntity {
         this.dueDate = dueDate;
     }
 
+    public static Rental of(BookItem bookItem, User user) {
+        RentalStatus defaultStatus = RentalStatus.RENTED;
+        LocalDate defaultDueDate = LocalDate.now().plusDays(14);
+
+        return new Rental(bookItem, user, defaultStatus, defaultDueDate);
+    }
+
     // 상태 변경 메서드
     public void returnRental() {
         this.status = RentalStatus.RETURNED;
@@ -50,13 +63,6 @@ public class Rental extends BaseEntity {
 
     public void markOverdue() {
         this.status = RentalStatus.OVERDUE;
-    }
-
-    public static Rental of(BookItem bookItem, User user) {
-        RentalStatus defaultStatus = RentalStatus.RENTED;
-        LocalDate defaultDueDate = LocalDate.now().plusDays(14);
-
-        return new Rental(bookItem, user, defaultStatus, defaultDueDate);
     }
 }
 
