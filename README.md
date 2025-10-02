@@ -24,9 +24,10 @@
 ## Redis 캐시 적용
 
 ### No Cache vs Redis Cache 
+- 책 검색 키워드 / 인기 검색어 검색
 - 데이터: 약 5만 건
 - Postman 요청
-- 요청 url: localhost:8080/api/v1/books?keyword=행복 / localhost:8080/api/v2/books?keyword=행복
+- 요청 url: `localhost:8080/api/v1/books?keyword=행복` / `localhost:8080/api/v2/books?keyword=행복`
 
 |            | 평균 응답속도 |
 |---------------------|---------------|
