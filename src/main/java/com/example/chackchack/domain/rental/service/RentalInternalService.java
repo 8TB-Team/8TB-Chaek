@@ -3,6 +3,7 @@ package com.example.chackchack.domain.rental.service;
 import com.example.chackchack.domain.bookItem.entity.BookItem;
 import com.example.chackchack.domain.bookItem.repository.BookItemRepository;
 import com.example.chackchack.domain.rental.dto.request.RentalCreateRequest;
+import com.example.chackchack.domain.rental.dto.request.RentalUpdateRequest;
 import com.example.chackchack.domain.rental.dto.response.RentalCreateResponse;
 import com.example.chackchack.domain.rental.dto.response.RentalPageResponse;
 import com.example.chackchack.domain.rental.dto.response.RentalUpdateResponse;
@@ -49,9 +50,10 @@ public class RentalInternalService {
     }
 
     @Transactional
-    public RentalUpdateResponse returnRental(Long rentalId, Long userId) {
-        Rental rental = rentalRepository.findById(rentalId)
-                .orElseThrow(() -> new InvalidRentalException(RentalErrorCode.REN_SEARCH_FAIL_INVALID_ID));
+    public RentalUpdateResponse returnRental(RentalUpdateRequest request, Long userId) {
+        Rental rental = rentalRepository.findByBookItemSerialNumberAndStatus(
+                request.getSerialNumber(), RentalStatus.RENTED
+        ).orElseThrow(() -> new InvalidRentalException(RentalErrorCode.REN_SEARCH_FAIL_INVALID_ID));
 
         if (!rental.getUser().getId().equals(userId)) {
             throw new InvalidRentalException(RentalErrorCode.REN_RETURN_NO_PERMISSION);
